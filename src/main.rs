@@ -4,6 +4,12 @@ use sqlite::{open, Connection, State};
 use std::collections::HashMap;
 use std::io::{Read, Write};
 
+/** Test Comment
+ * ! Alert
+ * ? Question
+ * * Important
+ * TODO: Do stuff
+ */
 pub fn get_db() -> Connection {
     open("qrpg.db").unwrap()
 }
