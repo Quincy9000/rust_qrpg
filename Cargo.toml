@@ -1,0 +1,12 @@
+[package]
+name = "qrpg"
+version = "0.1.0"
+authors = ["quincy"]
+edition = "2018"
+
+[dependencies] 
+console = "0.9.2"
+serde = {version = "1.0.102", features = ["derive"]}
+serde_json = "1.0.46"
+rand = "0.7.3"
+sqlite = "0.25.0"

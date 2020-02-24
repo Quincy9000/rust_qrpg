@@ -1,0 +1,1 @@
+{"name":"Jacob","location":"None","quest":"None","stats":{"physique":6,"technique":1,"mystique":1},"health":57,"stamina":52,"mana":47,"money":100,"inventory":[],"equipped":{"item":{"name":"Hands","weight":0.0,"value":0},"physique_scale":1.0,"technique_scale":1.0,"mystique_scale":1.0},"triggers":{}}
