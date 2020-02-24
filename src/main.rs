@@ -5,7 +5,6 @@ use std::collections::HashMap;
 use std::io::{Read, Write};
 
 pub fn get_db() -> Connection {
-    println!("Hi!");
     open("qrpg.db").unwrap()
 }
 
@@ -13,6 +12,16 @@ pub fn dir_exists() {
     if let Err(_) = std::fs::read_dir(PLAYERS) {
         std::fs::create_dir(PLAYERS).expect("file dir err");
     }
+}
+
+pub fn enemies_from_db(db: &Connection) -> Vec<Enemy> {
+    let mut v = Vec::new();
+    let mut statement = db.prepare("SELECT * FROM enemies").unwrap();
+    while let Ok(State::Row) = statement.next() {
+        println!("{}", statement.read::<String>(0).unwrap());
+        v.push(Enemy::new(&statement.read::<String>(0).unwrap()));
+    }
+    v
 }
 
 pub fn weapons_from_db(db: &Connection) -> Vec<Weapon> {
@@ -37,36 +46,6 @@ pub fn weapons_from_db(db: &Connection) -> Vec<Weapon> {
 }
 
 const PLAYERS: &str = "Players/";
-
-const ENEMIES: [&str; 27] = [
-    "Zombie",
-    "Goblin",
-    "Orc",
-    "Mummy",
-    "Slime",
-    "Ogre",
-    "Cyclops",
-    "Minotaur",
-    "Knight",
-    "Wizard",
-    "Thief",
-    "Wyvren",
-    "Dragon",
-    "Skeleton",
-    "Your Mum",
-    "Thug",
-    "Hobo",
-    "Karen",
-    "Imp",
-    "Tiger",
-    "Leopard",
-    "Panther",
-    "Land Shark",
-    "Megalodon",
-    "Rabbit",
-    "Swallow",
-    "Magikarp",
-];
 
 fn clear() {
     console::Term::stdout().clear_screen().unwrap();
@@ -444,13 +423,10 @@ pub struct Enemy {
 
 impl Enemy {
     pub fn random() -> Self {
-        let n: usize = rand::thread_rng().gen_range(0, ENEMIES.len());
-        Enemy {
-            name: ENEMIES[n].to_string(),
-            stats: Stats::default(),
-            health: 10,
-            weapon: None,
-        }
+        let db = get_db();
+        let mut enemies = enemies_from_db(&db);
+        let n: usize = rand::thread_rng().gen_range(0, enemies.len());
+        enemies.remove(n)
     }
 
     pub fn with_stats(&self, p: i32, t: i32, m: i32) -> Self {
@@ -502,8 +478,8 @@ impl Enemy {
 impl std::fmt::Display for Enemy {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
         f.write_str(&format!(
-            "Enemy{{name:{}, physique:{}, technique:{}, mystique:{}}}",
-            self.name, self.stats.physique, self.stats.technique, self.stats.mystique
+            "Enemy{{ name: {}, stats:{} }}",
+            self.name, self.stats
         ))
     }
 }
@@ -860,7 +836,7 @@ mod test {
     #[test]
     fn test2() {
         let e = crate::Enemy::random();
-        println!("{:?}", e);
+        println!("{}", e);
     }
 
     #[test]
