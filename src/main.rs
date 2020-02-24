@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::io::{Read, Write};
 
 pub fn get_db() -> Connection {
+    println!("Hi!");
     open("qrpg.db").unwrap()
 }
 
