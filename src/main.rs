@@ -543,6 +543,7 @@ impl<'a> std::fmt::Display for BattleOutcome<'a> {
 pub fn combat<'a>(attacker: &'a dyn Attacker, defender: &'a mut dyn Defender) -> BattleOutcome<'a> {
     let attacker_damage = attacker.damage();
     let defender_defense = defender.defense();
+    println!("tset");
     let mut damage = attacker_damage - defender_defense;
     if damage > 0 {
         defender.take_damage(damage);
