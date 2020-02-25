@@ -509,7 +509,7 @@ impl Attacker for Enemy {
 
 impl Defender for Enemy {
     fn defense(&self) -> i32 {
-        self.name.len() as i32
+        (self.name.len() / 2usize) as i32
     }
 
     fn take_damage(&mut self, damage: i32) {
@@ -523,6 +523,12 @@ pub struct BattleOutcome<'a> {
     pub damage: i32,
 }
 
+impl<'a> BattleOutcome<'a> {
+    pub fn print(&self) {
+        println!("{}", self);
+    }
+}
+
 impl<'a> std::fmt::Display for BattleOutcome<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(&format!(
@@ -531,12 +537,6 @@ impl<'a> std::fmt::Display for BattleOutcome<'a> {
             self.defender.name(),
             self.damage
         ))
-    }
-}
-
-impl<'a> BattleOutcome<'a> {
-    pub fn print(&self) {
-        println!("{}", self);
     }
 }
 
@@ -697,7 +697,6 @@ pub fn select_equipped(mut player: Player) -> Player {
 }
 
 pub fn script_battle(player: &mut Player, enemy: &mut Enemy) {
-    let last_round_info = "";
     'battle: loop {
         let dsp = || {
             println!("This is the battle screen!");
@@ -741,7 +740,7 @@ pub fn script_battle(player: &mut Player, enemy: &mut Enemy) {
             }
             any_key("");
         } else if c == 1 {
-            any_key("You dont have any items because you were mugged.. lol");
+            any_key("You dont have any items because you were mugged..");
         } else {
             any_key(
                 "You try to flee, but the bunny overpowers you, and forces you to magically fight!",
