@@ -15,7 +15,7 @@ pub fn get_db() -> Connection {
 }
 
 pub fn dir_exists() {
-    if let Err(_) = std::fs::read_dir(PLAYERS) {
+    if let Err(_) = std::fs::read_dir(PLAYERS) { 
         std::fs::create_dir(PLAYERS).expect("file dir err");
     }
 }
@@ -23,11 +23,14 @@ pub fn dir_exists() {
 pub fn enemies_from_db(db: &Connection) -> Vec<Enemy> {
     let mut v = Vec::new();
     let mut statement = db.prepare("SELECT * FROM enemies").unwrap();
-    while let Ok(State::Row) = statement.next() {
-        println!("{}", statement.read::<String>(0).unwrap());
-        v.push(Enemy::new(&statement.read::<String>(0).unwrap()));
+    loop  {
+        match statement.next() {
+            Ok(State::Row) => {
+                    v.push(Enemy::new(&statement.read::<String>(0).unwrap()));
+                }
+            _ => break v,
+        }
     }
-    v
 }
 
 pub fn weapons_from_db(db: &Connection) -> Vec<Weapon> {
@@ -471,9 +474,9 @@ impl Enemy {
         }
     }
 
-    pub fn new(name: &str) -> Self {
+    pub fn new<T: AsRef<str>>(name: T) -> Self {
         Enemy {
-            name: name.into(),
+            name: name.as_ref().into(),
             stats: Default::default(),
             health: 100,
             weapon: None,
@@ -778,7 +781,6 @@ pub fn story(player: Player) -> Player {
     if player.triggers.is_empty() {
         player = char_intro(player);
     }
-
     player
 }
 
