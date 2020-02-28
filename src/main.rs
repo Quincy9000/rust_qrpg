@@ -14,6 +14,8 @@ pub fn get_db() -> Connection {
     open("qrpg.db").unwrap()
 }
 
+const PLAYERS: &str = "Players/";
+
 pub fn dir_exists() {
     if let Err(_) = std::fs::read_dir(PLAYERS) { 
         std::fs::create_dir(PLAYERS).expect("file dir err");
@@ -53,8 +55,6 @@ pub fn weapons_from_db(db: &Connection) -> Vec<Weapon> {
     }
     v
 }
-
-const PLAYERS: &str = "Players/";
 
 fn clear() {
     console::Term::stdout().clear_screen().unwrap();
