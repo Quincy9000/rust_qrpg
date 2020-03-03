@@ -38,22 +38,26 @@ pub fn enemies_from_db(db: &Connection) -> Vec<Enemy> {
 pub fn weapons_from_db(db: &Connection) -> Vec<Weapon> {
     let mut v = Vec::new();
     let mut statement = db.prepare("SELECT * FROM weapons").unwrap();
-    while let Ok(State::Row) = statement.next() {
-        let name: String = statement.read(0).unwrap();
-        let weight: i64 = statement.read(1).unwrap();
-        let value: i64 = statement.read(2).unwrap();
-        let p: f64 = statement.read(3).unwrap();
-        let t: f64 = statement.read(4).unwrap();
-        let m: f64 = statement.read(5).unwrap();
-        let w = Weapon {
-            item: Item::new(&name, weight as f32, value as i32),
-            physique_scale: p as f32,
-            technique_scale: t as f32,
-            mystique_scale: m as f32,
-        };
-        v.push(w);
+    loop {
+        match statement.next() {
+            Ok(State::Row) => {
+                let name: String = statement.read(0).unwrap();
+                let weight: i64 = statement.read(1).unwrap();
+                let value: i64 = statement.read(2).unwrap();
+                let p: f64 = statement.read(3).unwrap();
+                let t: f64 = statement.read(4).unwrap();
+                let m: f64 = statement.read(5).unwrap();
+                let w = Weapon {
+                    item: Item::new(&name, weight as f32, value as i32),
+                    physique_scale: p as f32,
+                    technique_scale: t as f32,
+                    mystique_scale: m as f32,
+                };
+                v.push(w);
+            },
+            _ => break v,
+        }
     }
-    v
 }
 
 fn clear() {
